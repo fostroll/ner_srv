@@ -58,7 +58,7 @@ Default level is `3`.
 phonetized. Default is `false`.
 
 ```
-http://<address>:<port>/api/text-distance/<string:text1>/<string:text2>?ner1=&ner2=&level=3&algorithm=damerau_levenshtein&normalize=true&qval=1
+http://<address>:<port>/api/text-distance/<text1>/<text2>?ner1=&ner2=&level=3&algorithm=damerau_levenshtein&normalize=true&qval=1
 ```
 Returns text distance between **text1** and **text2**. Only text in Russian
 are processed correctly.
