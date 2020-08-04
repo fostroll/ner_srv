@@ -12,7 +12,7 @@ Tiny Flask app for NE tagging with some additional features.
 First, place storages of trained ***MorDL*** `UposTagger`, `FeatsTagger` and
 `NeTagger` into `ner_srv/models` directory. Change the parameter `emb_path` in
 `ds_config.json` file of every storage, so that that path became correct.
-Note, that the root point for relevant paths there is `ner_srv`. Thus, if your
+Note, that the root point for relative paths there is `ner_srv`. Thus, if your
 embeddings also placed in the `ner_srv/models` directory, just add `'model/'`
 in the beginning of each `emb_path` value.
 
@@ -50,13 +50,13 @@ http://<address>:<port>/api/phonetize/<text>?level=3&syllables=false
 Returns phonetized version of **text**. Only texts in Russian are processed
 correctly.
 
-**level** (`0` .. `5`): the level of simplification.<br/>
-- `0` means no changes at all but excess spaces;<br/>
-- `1` removes all spaces;<br/>
-- `2` most standard version of phonetization;<br/>
-- `3` refined phonetization;<br/> 
-- `4` rude phonetization;<br/>
-- `5` even more rude.<br/>
+**level**: the level of simplification. Allowed values:
+- `0` means no changes at all but excess spaces;
+- `1` removes all spaces;
+- `2` most standard version of phonetization;
+- `3` refined phonetization;
+- `4` rude phonetization;
+- `5` even more rude.
 Default level is `3`.
 
 **syllables**: if `true`, returns array of syllables instead of just **text**
