@@ -27,7 +27,7 @@ sh ./run.sh
 ## Usage
 
 ```
-http://\<server>:\<port>/api/phonetize/\<text>?level=\<level>&syllables=<true|false>
+http://&le;server>:\<port>/api/phonetize/\<text>?level=\<level>&syllables=<true|false>
 ```
 
 ## License
