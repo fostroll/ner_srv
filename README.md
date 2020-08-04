@@ -1,6 +1,6 @@
 # phonetized_ner_srv
 
-Tiny Flask app for NE tagging with some additional features.
+Tiny Flask app for phonetization, NE tagging and text distance calculation.
 
 ## Prerequisites
 
