@@ -57,7 +57,8 @@ correctly.
 - `3` refined phonetization;
 - `4` rude phonetization;
 - `5` even more rude.
-Default level is `3`.
+
+Default **level** is `3`.
 
 **syllables**: if `true`, returns array of syllables instead of just **text**
 phonetized. Default is `false`.
