@@ -2,6 +2,11 @@
 
 Tiny Flask app for NE tagging with some additional features.
 
+## Prerequisites
+
+*Python 3* and *PyPI* packages `flask`, `mordl`, `textdistance`, `toxine`,
+`transliterate`.
+
 ## Starting the Server
 
 First, place storages of trained ***MorDL*** `UposTagger`, `FeatsTagger` and
