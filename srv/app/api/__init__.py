@@ -4,7 +4,7 @@ from flask import Blueprint, request, send_from_directory
 
 from app import app
 from app.lib.errors import err_method_not_allowed, err_not_implemented
-from mordl import NeTagger, UposTagger
+from mordl import FeatsTagger, NeTagger, UposTagger
 import os
 from toxine import TextPreprocessor
 
