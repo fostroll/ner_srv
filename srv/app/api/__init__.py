@@ -27,7 +27,7 @@ ne_tagger.load(os.path.join(DATA_DIR, 'ne_model'))
 
 #@app.route('/api/<path:path>', methods=[GET, POST, PUT, PATCH', DELETE])
 @app.route('/<path:path>', methods=[GET, POST, PUT, PATCH, DELETE])
-def catch_all (path):
+def catch_all(path):
     #path = '/api/' + path
     path = '/' + path
     res = err_not_implemented()
@@ -38,7 +38,7 @@ def catch_all (path):
     return res
 
 @bp.route('/static/<path:path>', methods=[GET])
-def static (path):
+def static(path):
     return send_from_directory('static', path)
 
 from app.api import phonetize, tag, text_distance, tokenize
