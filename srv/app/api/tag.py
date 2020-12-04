@@ -19,7 +19,9 @@ def tag(text=None):
         text = [x[0] for x in text_preprocessor.process_text(text,
                                                              silent=True)]
     text = upos_tagger.predict(text, log_file=None)
-    text = list(ne_tagger.predict(text, log_file=None))
+    text = ne_tagger.predict(text, log_file=None)
+    text = list(text_preprocessor.unmask_tokens(text, keep_empty=False,
+                                                keep_tags=False))
     if format == 'simple':
         text = {'predict': [(x['FORM'], x['MISC'].get('NE'))
                                 for x in text for x in x
