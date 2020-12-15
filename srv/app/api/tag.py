@@ -2,7 +2,7 @@
 from flask import jsonify, make_response, request
 import json
 
-from app.api import GET, POST, bp, \
+from app.api import GET, POST, TimeoutException, bp, apply_thesaurus, \
                     feats_tagger, ne_tagger, text_preprocessor, upos_tagger
 
 
@@ -13,20 +13,26 @@ def tag(text=None):
     if not text:
         text=request.args.get('text') or request.form.get('text')
     try:
-        text = json.load(text)
-        if isinstance(text[0], dict):
-            text = [text]
-    except AttributeError:
-        text = [x[0] for x in text_preprocessor.process_text(text,
-                                                             silent=True)]
-    text = upos_tagger.predict(text, log_file=None)
-    text = feats_tagger.predict(text, log_file=None)
-    text = text_preprocessor.unmask_tokens(text, keep_empty=False,
-                                           keep_tags=True)
-    text = list(ne_tagger.predict(text, log_file=None))
-    if format == 'simple':
-        text = {'predict': [(x['FORM'], x['MISC'].get('NE'))
-                                for x in text for x in x
-                                if x['FORM'] and '-' not in x['ID']]}
-    res = make_response(jsonify(text), 200)
+        try:
+            text = json.load(text)
+            if isinstance(text[0], dict):
+                text = [text]
+        except AttributeError:
+            text = apply_thesaurus(text)
+            if not isinstance(text, str):
+                raise TimeoutException()
+            text = [x[0] for x in text_preprocessor.process_text(text,
+                                                                 silent=True)]
+        text = upos_tagger.predict(text, log_file=None)
+        text = feats_tagger.predict(text, log_file=None)
+        text = text_preprocessor.unmask_tokens(text, keep_empty=False,
+                                               keep_tags=True)
+        text = list(ne_tagger.predict(text, log_file=None))
+        if format == 'simple':
+            text = {'predict': [(x['FORM'], x['MISC'].get('NE'))
+                                    for x in text for x in x
+                                    if x['FORM'] and '-' not in x['ID']]}
+        res = make_response(jsonify(text), 200)
+    except TimeoutException:
+        res = text
     return res

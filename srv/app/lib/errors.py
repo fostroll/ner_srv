@@ -47,6 +47,9 @@ def err_unprocessable_entity (message=''):
 def err_not_implemented (message=''):
     return error_response(501, message)
 
+def err_gateway_timeout (message=''):
+    return error_response(504, message)
+
 def err_insufficient_storage (message=''):
     return error_response(507, message)
 
