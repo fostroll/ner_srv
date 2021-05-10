@@ -6,7 +6,7 @@ from app.api import bp, GET, YES
 from app.lib.phonetize import phonetize2
 
 
-@bp.route('/api/phonetize/<string:text>',
+@bp.route('/api/phonetize/<path:text>',
           methods=[GET], strict_slashes=False)
 def phonetize(text):
     level = request.args.get('level')

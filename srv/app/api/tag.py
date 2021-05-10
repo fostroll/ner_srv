@@ -6,7 +6,7 @@ from app.api import GET, POST, TimeoutException, bp, apply_thesaurus, \
                     feats_tagger, ne_tagger, text_preprocessor, upos_tagger
 
 
-@bp.route('/api/tag/<string:text>', methods=[GET])
+@bp.route('/api/tag/<path:text>', methods=[GET])
 @bp.route('/api/tag', methods=[GET, POST])
 def tag(text=None):
     format = request.args.get('format')
