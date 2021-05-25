@@ -19,11 +19,15 @@ def text_distance(text1, text2):
     qval = request.args.get('qval')
 
     def ner(text, ner_type):
-        text = [x[0] for x in text_preprocessor.process_text(text,
-                                                             silent=True)]
-        text = upos_tagger.predict(text, log_file=None)
-        text = feats_tagger.predict(text, log_file=None)
-        text = ne_tagger.predict(text, log_file=None)
+        with text_preprocessor.lock:
+            text = [x[0] for x in text_preprocessor.process_text(text,
+                                                                 silent=True)]
+        with upos_tagger.lock:
+            text = upos_tagger.predict(text, log_file=None)
+        with feats_tagger.lock:
+            text = feats_tagger.predict(text, log_file=None)
+        with ne_tagger.lock:
+            text = ne_tagger.predict(text, log_file=None)
 
         addr = []
         for token in next(text):

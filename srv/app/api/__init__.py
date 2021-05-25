@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
-
-from flask import Blueprint, request, send_from_directory
-
-from app import app
-from app.lib.errors import err_gateway_timeout, err_method_not_allowed, \
-                           err_not_implemented
 from contextlib import contextmanager
+from flask import Blueprint, request, send_from_directory
+from junky import add_class_lock
 from mordl import FeatsTagger, NeTagger, UposTagger
 import os
 import re
 import signal
 from toxine import TextPreprocessor
+
+from app import app
+from app.lib.errors import err_gateway_timeout, err_method_not_allowed, \
+                           err_not_implemented
+
 
 (GET,   POST,   PUT,   PATCH,   DELETE,   HEAD,   OPTIONS) = (
 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS')
@@ -22,29 +23,18 @@ bp = Blueprint('api', __name__)
 DATA_DIR = 'models'
 THESAURUS_FN = os.path.join(DATA_DIR, 'thesaurus.csv')
 THESAURUS_TIMEOUT = None  # seconds
-text_preprocessor = TextPreprocessor()
-upos_tagger = UposTagger()
-upos_tagger.load(os.path.join(DATA_DIR, 'upos_model'))
-feats_tagger = FeatsTagger()
-feats_tagger.load(os.path.join(DATA_DIR, 'feats_model'))
-ne_tagger = NeTagger()
-ne_tagger.load(os.path.join(DATA_DIR, 'ne_model'))
+text_preprocessor = add_class_lock(TextPreprocessor())
+upos_tagger = add_class_lock(UposTagger())
+feats_tagger = add_class_lock(FeatsTagger())
+ne_tagger = add_class_lock(NeTagger())
 
-class TimeoutException(Exception): pass
+@app.before_first_request
+def initialize():
+    global text_preprocessor, upos_tagger, feats_tagger, ne_tagger
 
-@contextmanager
-def time_limit(seconds):
-    yield
-    return
-    ### isgnal only works in the main thread:
-    def signal_handler(signum, frame):
-        raise TimeoutException("Timed out!")
-    signal.signal(signal.SIGALRM, signal_handler)
-    signal.alarm(seconds or 0)
-    try:
-        yield
-    finally:
-        signal.alarm(0)
+    upos_tagger.load(os.path.join(DATA_DIR, 'upos_model'))
+    feats_tagger.load(os.path.join(DATA_DIR, 'feats_model'))
+    ne_tagger.load(os.path.join(DATA_DIR, 'ne_model'))
 
 thesaurus = {}
 if not os.path.isfile(THESAURUS_FN):
@@ -67,6 +57,23 @@ else:
                 'ERROR: duplicate key in thesaurus (line #{})'.format(line_no)
             thesaurus[line[0]] = line[1]
 re_thesaurus = [(re.compile(x), y) for x, y in thesaurus.items()]
+
+class TimeoutException(Exception):
+    pass
+
+@contextmanager
+def time_limit(seconds):
+    yield
+    return
+    ### isgnal only works in the main thread:
+    def signal_handler(signum, frame):
+        raise TimeoutException("Timed out!")
+    signal.signal(signal.SIGALRM, signal_handler)
+    signal.alarm(seconds or 0)
+    try:
+        yield
+    finally:
+        signal.alarm(0)
 
 def apply_thesaurus(text):
     line_no = 1
